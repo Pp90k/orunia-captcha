@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eaf4ff">
+  <title>ORUNIA — Vérification de sécurité</title>
+
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #eaf4ff, #dce6ff);
+      color: #17345c;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: min(92%, 440px);
+      padding: 32px 20px;
+      text-align: center;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(23, 107, 255, .12);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: #176bff;
+      letter-spacing: 3px;
+    }
+
+    p { line-height: 1.5; }
+
+    #status {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>ORUNIA</h1>
+    <p>Vérification de sécurité</p>
+
+    <div
+      class="h-captcha"
+      data-sitekey="dd4cf522-dd56-412a-aa3e-4fb438506eb0"
+      data-callback="onCaptchaSuccess"
+      data-expired-callback="onCaptchaExpired"
+      data-error-callback="onCaptchaError">
+    </div>
+
+    <p id="status" role="status">
+      En attente de vérification...
+    </p>
+  </main>
+
+  <script>
+    let tokenSent = false;
+
+    function onCaptchaSuccess(token) {
+      if (!token || tokenSent) return;
+
+      tokenSent = true;
+      document.getElementById("status").textContent =
+        "Vérification réussie.";
+
+      if (window.Captcha &&
+          typeof window.Captcha.postMessage === "function") {
+        window.Captcha.postMessage(token);
+      } else {
+        tokenSent = false;
+        document.getElementById("status").textContent =
+          "Application non connectée. Réessaie.";
+      }
+    }
+
+    function onCaptchaExpired() {
+      tokenSent = false;
+      document.getElementById("status").textContent =
+        "Vérification expirée. Recommence.";
+    }
+
+    function onCaptchaError() {
+      tokenSent = false;
+      document.getElementById("status").textContent =
+        "Erreur CAPTCHA. Réessaie.";
+    }
+  </script>
+</body>
+</html>
